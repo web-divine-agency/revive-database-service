@@ -55,7 +55,7 @@ export default {
    * @returns
    */
   create: (req, res) => {
-    let message, validation;
+    let message, validation, payload;
 
     validation = Validator.check([
       Validator.required(req.body, "table"),
@@ -68,11 +68,15 @@ export default {
       return res.json(message);
     }
 
+    const { table, data } = req.body;
+
+    payload = data;
+
     let date = moment();
-    data.created_at = date.format("YYYY-MM-DD HH:mm:ss");
-    data.created_at_order = parseInt(date.format("YYYYMMDDHHmmss"));
-    data.updated_at = date.format("YYYY-MM-DD HH:mm:ss");
-    data.updated_at_order = parseInt(date.format("YYYYMMDDHHmmss"));
+    payload.created_at = date.format("YYYY-MM-DD HH:mm:ss");
+    payload.created_at_order = parseInt(date.format("YYYYMMDDHHmmss"));
+    payload.updated_at = date.format("YYYY-MM-DD HH:mm:ss");
+    payload.updated_at_order = parseInt(date.format("YYYYMMDDHHmmss"));
 
     mysqlClient.getConnection((error, connection) => {
       if (error) {
@@ -82,8 +86,8 @@ export default {
       }
 
       connection.query(
-        `INSERT INTO ${table} (${Object.keys(data)}) VALUES ?`,
-        [[Object.values(data)]],
+        `INSERT INTO ${table} (${Object.keys(payload)}) VALUES ?`,
+        [[Object.values(payload)]],
         (err, result) => {
           connection.release();
 
@@ -184,4 +188,47 @@ export default {
       });
     });
   },
+
+  /**
+   * Get user details
+   * @param {*} req 
+   * @param {*} res 
+   * @returns 
+   */
+  user: (req, res) => {
+    let message, validation;
+
+    validation = Validator.check([Validator.required(req.body, "query")]);
+
+    if (!validation.pass) {
+      message = Logger.message(req, res, 422, "error", validation.result);
+      Logger.error([JSON.stringify(message)]);
+      return res.json(message);
+    }
+
+    const { query } = req.body;
+
+    mysqlClient.getConnection((error, connection) => {
+      if (error) {
+        message = Logger.message(req, res, 500, "error", error);
+        Logger.error([JSON.stringify(message)]);
+        return res.json(message);
+      }
+
+      connection.query(query, (err, result) => {
+        connection.release();
+
+        if (err) {
+          message = Logger.message(req, res, 500, "error", err);
+          Logger.error([JSON.stringify(message)]);
+          return res.json(message);
+        }
+
+        message = Logger.message(req, res, 200, "result", result);
+        Logger.out([JSON.stringify(message)]);
+        return res.json(message);
+      });
+    });
+  },
+
 };

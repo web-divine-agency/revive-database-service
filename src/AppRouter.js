@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 
 import { app } from "./Server.js";
 
+import { authenticated } from "./middleware/auth.js";
+
 import Controller from "./controllers/Controller.js";
 import DatabaseController from "./controllers/DatabaseController.js";
 
@@ -13,25 +15,15 @@ if (process.env.APP_ENV === "dev") {
 
 app.use(bodyParser.json());
 
-const portal = express.Router();
-const admin = express.Router();
+const database = express.Router();
 
-/**
- * Portal routes
- */
-app.use("/portal", portal);
-// portal.use(authenticated);
-portal.get("/select", DatabaseController.select);
-
-
-/**
- * Admin routes
- */
-app.use("/admin", admin);
-// admin.use(authAdmin);
-admin.post("/create", DatabaseController.create);
+app.use("/db", database);
+database.use(authenticated);
+database.get("/select", DatabaseController.select);
+database.post("/create", DatabaseController.create);
 
 /**
  * Base routes
  */
 app.get("/", Controller.base);
+app.get("/user", DatabaseController.user);
