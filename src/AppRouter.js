@@ -4,13 +4,8 @@ import bodyParser from "body-parser";
 
 import { app } from "./Server.js";
 
-import { authAdmin, authenticated } from "./middleware/auth.js";
-
 import Controller from "./controllers/Controller.js";
-import UserController from "./controllers/UserController.js";
-import AuthController from "./controllers/AuthController.js";
-import RoleController from "./controllers/RoleController.js";
-import PermissionController from "./controllers/PermissionController.js";
+import DatabaseController from "./controllers/DatabaseController.js";
 
 if (process.env.APP_ENV === "dev") {
   app.use(cors());
@@ -25,32 +20,18 @@ const admin = express.Router();
  * Portal routes
  */
 app.use("/portal", portal);
-portal.use(authenticated);
+// portal.use(authenticated);
+portal.get("/select", DatabaseController.select);
+
 
 /**
  * Admin routes
  */
 app.use("/admin", admin);
-admin.use(authAdmin);
-admin.get("/res/users", UserController.list);
-admin.post("/res/users", UserController.create);
-
-admin.get("/res/roles", RoleController.list);
-admin.post("/res/roles", RoleController.create);
-admin.get("/res/roles/:role_id", RoleController.read);
-admin.put("/res/roles/:role_id", RoleController.update);
-admin.delete("/res/roles/:role_id", RoleController.delete);
-
-admin.get("/fn/roles-all", RoleController.all);
-
-admin.get("/res/permissions", PermissionController.list);
-admin.post("/res/permissions", PermissionController.create);
-
-admin.get("/fn/permissions-all", PermissionController.all);
+// admin.use(authAdmin);
+admin.post("/create", DatabaseController.create);
 
 /**
  * Base routes
  */
 app.get("/", Controller.base);
-app.post("/login", AuthController.login);
-app.get("/authenticated", AuthController.authenticated);

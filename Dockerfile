@@ -1,6 +1,6 @@
 FROM node:20.18.0-alpine
 
-WORKDIR /var/www/revive-user-service
+WORKDIR /var/www/revive-database-service
 
 COPY package.json /
 

@@ -1,7 +1,7 @@
 {
-  "name": "revive-user-service",
+  "name": "revive-database-service",
   "version": "1.0.0",
-  "description": "API service for users management",
+  "description": "Revive Pharmacy database service",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/web-divine-agency/revive-user-service.git"
+    "url": "git+ssh://git@github.com/web-divine-agency/revive-database-service.git"
   },
   "author": "tony-tripulca",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/web-divine-agency/revive-user-service/issues"
+    "url": "https://github.com/web-divine-agency/revive-database-service/issues"
   },
-  "homepage": "https://github.com/web-divine-agency/revive-user-service#readme",
+  "homepage": "https://github.com/web-divine-agency/revive-database-service#readme",
   "dependencies": {
     "axios": "^1.7.2",
     "cors": "^2.8.5",
@@ -29,7 +29,6 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.9.0",
     "eslint": "^9.9.0"
   }
 }
