@@ -22,6 +22,7 @@ var enums = [
   "create_templates_table",
   "create_template_categories_table",
   "create_activity_logs_table",
+  "create_branches_table",
 ];
 
 var statements = [
@@ -161,6 +162,25 @@ var statements = [
     "user_id BIGINT UNSIGNED NOT NULL",
     "module VARCHAR(255) NOT NULL",
     "note TEXT NOT NULL",
+    "created_at TIMESTAMP NULL",
+    "created_at_order DOUBLE NULL",
+    "updated_at TIMESTAMP NULL",
+    "updated_at_order DOUBLE NULL",
+    "deleted_at TIMESTAMP NULL",
+    "deleted_at_order DOUBLE NULL",
+  ]})`,
+  // create_branches_table
+  `CREATE TABLE branches (${[
+    "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
+    "name VARCHAR(255) NOT NULL",
+    "address_line_1 VARCHAR(255) NULL",
+    "address_line_2 VARCHAR(255) NULL",
+    "city VARCHAR(255) NULL",
+    "state VARCHAR(255) NULL",
+    "country VARCHAR(255) NULL",
+    "zip_code INT NULL",
+    "opening TIME NULL",
+    "closing TIME NULL",
     "created_at TIMESTAMP NULL",
     "created_at_order DOUBLE NULL",
     "updated_at TIMESTAMP NULL",
