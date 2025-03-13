@@ -80,7 +80,7 @@ export default {
 
     mysqlClient.getConnection((error, connection) => {
       if (error) {
-        message = Logger.message(req, res, 422, "error", error);
+        message = Logger.message(req, res, 500, "error", error);
         Logger.error([JSON.stringify(message)]);
         return res.json(message);
       }
@@ -107,53 +107,87 @@ export default {
 
   /**
    * Update resource
-   * @param {*} table
-   * @param {*} data
-   * @param {*} params
+   * @param {*} req
+   * @param {*} res
    * @returns
    */
-  update: (table, data, params) => {
-    let date = moment();
-    data.created_at = date.format("YYYY-MM-DD HH:mm:ss");
-    data.created_at_order = parseInt(date.format("YYYYMMDDHHmmss"));
+  update: (req, res) => {
+    let message,
+      validation,
+      date = moment();
+
+    validation = Validator.check([
+      Validator.required(req.body, "table"),
+      Validator.required(req.body, "data"),
+      Validator.required(req.body, "params"),
+    ]);
+
+    if (!validation.pass) {
+      message = Logger.message(req, res, 422, "error", validation.result);
+      Logger.error([JSON.stringify(message)]);
+      return res.json(message);
+    }
+
+    const { table, data, params } = req.body;
+
     data.updated_at = date.format("YYYY-MM-DD HH:mm:ss");
     data.updated_at_order = parseInt(date.format("YYYYMMDDHHmmss"));
 
-    return new Promise((resolve, reject) => {
-      mysqlClient.getConnection((err, con) => {
-        if (err) {
-          return reject(err);
-        }
+    mysqlClient.getConnection((error, connection) => {
+      if (error) {
+        message = Logger.message(req, res, 500, "error", error);
+        Logger.error([JSON.stringify(message)]);
+        return res.json(message);
+      }
 
-        // Convert data object into a WHERE clause
-        let where = Object.entries(params)
-          .map(([key]) => `${key} = ?`)
-          .join(" AND ");
+      // Convert data object into a WHERE clause
+      let where = Object.entries(params)
+        .map(([key]) => `${key} = ?`)
+        .join(" AND ");
 
-        con.query(
-          `UPDATE ${table} SET ? WHERE ${where}`,
-          [data, ...Object.values(params)],
-          (e, result) => {
-            con.release();
+      connection.query(
+        `UPDATE ${table} SET ? WHERE ${where}`,
+        [data, ...Object.values(params)],
+        (err, result) => {
+          connection.release();
 
-            if (e) {
-              return reject(e);
-            }
-            return resolve(result);
+          if (err) {
+            message = Logger.message(req, res, 500, "error", err);
+            Logger.error([JSON.stringify(message)]);
+            return res.json(message);
           }
-        );
-      });
+
+          message = Logger.message(req, res, 200, "result", result);
+          Logger.error([JSON.stringify(message)]);
+          return res.json(message);
+        }
+      );
     });
   },
 
   /**
    * Delete resource
-   * @param {*} table
-   * @param {*} id
+   * @param {*} req
+   * @param {*} res
    * @returns
    */
-  delete: (table, params) => {
-    let date = moment();
+  delete: (req, res) => {
+    let message,
+      validation,
+      date = moment();
+
+    validation = Validator.check([
+      Validator.required(req.body, "table"),
+      Validator.required(req.body, "params"),
+    ]);
+
+    if (!validation.pass) {
+      message = Logger.message(req, res, 422, "error", validation.result);
+      Logger.error([JSON.stringify(message)]);
+      return res.json(message);
+    }
+
+    const { table, params } = req.body;
 
     let data = {
       updated_at: date.format("YYYY-MM-DD HH:mm:ss"),
@@ -162,38 +196,43 @@ export default {
       deleted_at_order: parseInt(date.format("YYYYMMDDHHmmss")),
     };
 
-    return new Promise((resolve, reject) => {
-      mysqlClient.getConnection((err, con) => {
-        if (err) {
-          return reject(err);
-        }
+    mysqlClient.getConnection((error, connection) => {
+      if (error) {
+        message = Logger.message(req, res, 500, "error", error);
+        Logger.error([JSON.stringify(message)]);
+        return res.json(message);
+      }
 
-        // Convert data object into a WHERE clause
-        let where = Object.entries(params)
-          .map(([key]) => `${key} = ?`)
-          .join(" AND ");
+      // Convert data object into a WHERE clause
+      let where = Object.entries(params)
+        .map(([key]) => `${key} = ?`)
+        .join(" AND ");
 
-        con.query(
-          `UPDATE ${table} SET ? WHERE ${where}`,
-          [data, ...Object.values(params)],
-          (e, result) => {
-            con.release();
+      connection.query(
+        `UPDATE ${table} SET ? WHERE ${where}`,
+        [data, ...Object.values(params)],
+        (err, result) => {
+          connection.release();
 
-            if (e) {
-              return reject(e);
-            }
-            return resolve(result);
+          if (err) {
+            message = Logger.message(req, res, 500, "error", err);
+            Logger.error([JSON.stringify(message)]);
+            return res.json(message);
           }
-        );
-      });
+
+          message = Logger.message(req, res, 200, "error", result);
+          Logger.out([JSON.stringify(message)]);
+          return res.json(message);
+        }
+      );
     });
   },
 
   /**
    * Get user details
-   * @param {*} req 
-   * @param {*} res 
-   * @returns 
+   * @param {*} req
+   * @param {*} res
+   * @returns
    */
   user: (req, res) => {
     let message, validation;
@@ -230,5 +269,4 @@ export default {
       });
     });
   },
-
 };

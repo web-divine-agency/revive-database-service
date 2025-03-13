@@ -21,6 +21,8 @@ app.use("/db", database);
 database.use(authenticated);
 database.get("/select", DatabaseController.select);
 database.post("/create", DatabaseController.create);
+database.put("/update", DatabaseController.update);
+database.delete("/delete", DatabaseController.delete);
 
 /**
  * Base routes
