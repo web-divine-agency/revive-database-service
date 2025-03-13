@@ -9,9 +9,7 @@ import { authenticated } from "./middleware/auth.js";
 import Controller from "./controllers/Controller.js";
 import DatabaseController from "./controllers/DatabaseController.js";
 
-if (process.env.APP_ENV === "dev") {
-  app.use(cors());
-}
+app.use(cors());
 
 app.use(bodyParser.json());
 
