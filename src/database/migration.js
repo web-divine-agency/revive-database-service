@@ -10,24 +10,8 @@ var mysqlClient = mysql.createPool({
   queueLimit: 0,
 });
 
-var enums = [
-  "create_users_table",
-  "create_permissions_table",
-  "create_roles_table",
-  "create_role_permissions_table",
-  "create_user_roles_table",
-  "create_user_branches_table",
-  "create_user_templates_table",
-  "create_reset_passwords_table",
-  "create_templates_table",
-  "create_template_categories_table",
-  "create_activity_logs_table",
-  "create_branches_table",
-];
-
-var statements = [
-  // create_users_table
-  `CREATE TABLE users (${[
+var query = {
+  create_users_table: `CREATE TABLE users (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "first_name VARCHAR(255) NOT NULL",
     "last_name VARCHAR(255) NOT NULL",
@@ -45,8 +29,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_permissions_table
-  `CREATE TABLE permissions (${[
+  create_permissions_table: `CREATE TABLE permissions (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "name VARCHAR(255) NOT NULL",
     "description TEXT NULL",
@@ -57,8 +40,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_roles_table
-  `CREATE TABLE roles (${[
+  create_roles_table: `CREATE TABLE roles (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "name VARCHAR(255) NOT NULL",
     "description TEXT NULL",
@@ -69,8 +51,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_role_permissions_table
-  `CREATE TABLE role_permissions (${[
+  create_role_permissions_table: `CREATE TABLE role_permissions (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "role_id BIGINT UNSIGNED NOT NULL",
     "permission_id BIGINT UNSIGNED NOT NULL",
@@ -81,8 +62,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_user_roles_table
-  `CREATE TABLE user_roles (${[
+  create_user_roles_table: `CREATE TABLE user_roles (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "user_id BIGINT UNSIGNED NOT NULL",
     "role_id BIGINT UNSIGNED NOT NULL",
@@ -93,8 +73,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_user_branches_table
-  `CREATE TABLE user_branches (${[
+  create_user_branches_table: `CREATE TABLE user_branches (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "user_id BIGINT UNSIGNED NOT NULL",
     "branch_id BIGINT UNSIGNED NOT NULL",
@@ -105,8 +84,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_user_templates_table
-  `CREATE TABLE user_templates (${[
+  create_user_templates_table: `CREATE TABLE user_templates (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "user_id BIGINT UNSIGNED NOT NULL",
     "template_id BIGINT UNSIGNED NOT NULL",
@@ -117,8 +95,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_reset_passwords_table
-  `CREATE TABLE reset_passwords (${[
+  create_reset_passwords_table: `CREATE TABLE reset_passwords (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "user_id BIGINT UNSIGNED NOT NULL",
     "token VARCHAR(255) NOT NULL",
@@ -131,8 +108,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_templates_table
-  `CREATE TABLE templates (${[
+  create_templates_table: `CREATE TABLE templates (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "category_id BIGINT UNSIGNED NOT NULL",
     "name VARCHAR(255) NOT NULL",
@@ -144,8 +120,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_template_categories_table
-  `CREATE TABLE template_categories (${[
+  create_template_categories_table: `CREATE TABLE template_categories (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "name VARCHAR(255) NOT NULL",
     "description TEXT NULL",
@@ -156,8 +131,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_activity_logs_table
-  `CREATE TABLE activity_logs (${[
+  create_activity_logs_table: `CREATE TABLE activity_logs (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "user_id BIGINT UNSIGNED NOT NULL",
     "module VARCHAR(255) NOT NULL",
@@ -169,8 +143,7 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-  // create_branches_table
-  `CREATE TABLE branches (${[
+  create_branches_table: `CREATE TABLE branches (${[
     "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
     "name VARCHAR(255) NOT NULL",
     "address_line_1 VARCHAR(255) NULL",
@@ -188,13 +161,42 @@ var statements = [
     "deleted_at TIMESTAMP NULL",
     "deleted_at_order DOUBLE NULL",
   ]})`,
-];
+  create_resources_table: `CREATE TABLE resources (${[
+    "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
+    "user_id BIGINT UNSIGNED NOT NULL",
+    "category_id BIGINT UNSIGNED NOT NULL",
+    "title VARCHAR(255) NOT NULL",
+    "slug VARCHAR(255) NOT NULL UNIQUE",
+    "body TEXT NULL",
+    "media LONGTEXT NULL",
+    "additional_fields LONGTEXT NULL",
+    "link VARCHAR(255) NULL",
+    "status VARCHAR(255) NULL",
+    "created_at TIMESTAMP NULL",
+    "created_at_order DOUBLE NULL",
+    "updated_at TIMESTAMP NULL",
+    "updated_at_order DOUBLE NULL",
+    "deleted_at TIMESTAMP NULL",
+    "deleted_at_order DOUBLE NULL",
+  ]})`,
+  create_resource_categories_table: `CREATE TABLE resource_categories (${[
+    "id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
+    "name VARCHAR(255) NOT NULL",
+    "description TEXT NULL",
+    "created_at TIMESTAMP NULL",
+    "created_at_order DOUBLE NULL",
+    "updated_at TIMESTAMP NULL",
+    "updated_at_order DOUBLE NULL",
+    "deleted_at TIMESTAMP NULL",
+    "deleted_at_order DOUBLE NULL",
+  ]})`,
+};
 
 if (process.argv[2]) {
   mysqlClient.getConnection((err, con) => {
     if (err) throw err;
 
-    con.query(statements[enums.indexOf(process.argv[2])], function (e) {
+    con.query(query[process.argv[2]], function (e) {
       con.release();
 
       if (e) throw e;
