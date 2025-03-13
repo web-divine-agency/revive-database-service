@@ -204,7 +204,7 @@ if (process.argv[2]) {
     });
   });
 } else {
-  statements.forEach((statement) => {
+  Object.values(query).forEach((statement) => {
     mysqlClient.getConnection((err, con) => {
       if (err) throw err;
 
