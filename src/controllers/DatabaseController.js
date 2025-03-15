@@ -220,7 +220,7 @@ export default {
             return res.json(message);
           }
 
-          message = Logger.message(req, res, 200, "error", result);
+          message = Logger.message(req, res, 200, "result", result);
           Logger.out([JSON.stringify(message)]);
           return res.json(message);
         }
